@@ -522,3 +522,84 @@
 /*
 my code below
 */
+
+const canvasEl = document.querySelector("canvas");
+const canvasCTX = canvasEl.getContext("2d");
+
+// the game's paramaters (as a percentage of screen size to make it responsive)
+
+const GRID_CIRCLE = 0.7; // circle size as a percentage of the cell size
+const GRID_COLS = 7; // number of game columns
+const GRID_ROWS = 6; // number of game rows
+const MARGIN = 0.02; // margin as a percentage of the shortest screen dimension
+
+// colors
+
+const COLOR_BG = "peachpuff";
+const COLOR_FRAME = "papayawhip";
+const COLOR_FRAME_BOTTOM = "cornflowerblue";
+const COLOR_AI = "olivedrab";
+const COLOR_AI_DARK = "olive";
+const COLOR_RI = "skyblue";
+const COLOR_RI_DARK = "powderblue";
+
+// THE GAME LOOP -=-=-=--=--=--=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=
+let timeDiff, timeLast;
+requestAnimationFrame(playGame);
+function playGame(timeNow) {
+  // initialize the timeLast
+  if (!timeLast) {
+    timeLast = timeNow;
+  }
+
+  // calculating the time difference
+  timeDiff = timeNow - timeLast / 1000; // this will c alculate the time in seconds
+  timeLast = timeNow;
+
+  // calling the next frame
+  requestAnimationFrame(playGame);
+}
+
+// newGame function
+function newGame() {
+  createGrid();
+}
+
+// the createGrid function
+function createGrid() {
+  grid = [];
+
+  // set up the cell size and margins
+  let cell, marginX, marginY;
+
+  // device portrait orientation
+  if (((width - margin * 2) * GRID_ROWS) / GRID_COLS < height - margin * 2) {
+    cell = (width * margin * 2) / GRID_COLS;
+    marginX = margin;
+    marginY = (height - cell * GRID_ROWS) / 2;
+  } else {
+    // device landscape orientation
+    cell = (height - margin * 2) / GRID_ROWS;
+    marginY = margin;
+    marginX = width - (cell * GRID_COLS) / 2;
+  }
+}
+
+// drawBackground function
+
+function drawBackground() {
+  canvasCTX.fillStyle = COLOR_BG;
+  canvasCTX.fillRect(0, 0, width, height);
+}
+
+// setDimensions function
+
+function setDimensions() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvasEl.width = width;
+  canvasEl.height = height;
+  margin = MARGIN * Math.min(height, width);
+
+  newGame();
+}
