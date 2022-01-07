@@ -541,7 +541,17 @@ const COLOR_FRAME_BOTTOM = "peachpuff";
 const COLOR_AI = "fuchsia";
 const COLOR_AI_DARK = "olive";
 const COLOR_RI = "skyblue";
-const COLOR_RI_DARK = "powderblue";
+const COLOR_RI_DARK = "navy";
+
+const COLOR_TIE = "darkgrey";
+const COLOR_TIE_DARK = "black";
+const COLOR_WIN = "lime";
+
+//text
+const TEXT_AI = "Joe Mamma";
+const TEXT_RI = "You";
+const TEXT_TIE = "Draw";
+const TEXT_WIN = "WON!";
 
 // the cell class
 class Cell {
@@ -609,6 +619,7 @@ canvasEl.addEventListener("mousemove", highlightGrid);
 window.addEventListener("resize", setDimensions);
 
 // THE GAME LOOP -=-=-=--=--=--=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=
+
 let timeDiff, timeLast;
 requestAnimationFrame(playGame);
 function playGame(timeNow) {
@@ -624,6 +635,7 @@ function playGame(timeNow) {
   // draw functions
   drawBackground();
   drawGrid();
+  drawText();
 
   // calling the next frame
   requestAnimationFrame(playGame);
@@ -758,6 +770,45 @@ function drawGrid() {
     for (let cell of row) {
       cell.draw(canvasCTX);
     }
+  }
+}
+
+// the drawText function
+
+function drawText() {
+  if (!gameOver) {
+    return;
+  }
+
+  // set up text parameters
+  let size = grid[0][0].h;
+  canvasCTX.fillStyle = gameTied
+    ? COLOR_TIE
+    : playersTurn
+    ? COLOR_RI
+    : COLOR_AI;
+  canvasCTX.font = size + "px sans-serif";
+  canvasCTX.lineJoin = "round";
+  canvasCTX.lineWidth = size / 10;
+  canvasCTX.strokeStyle = gameTied
+    ? COLOR_TIE_DARK
+    : playersTurn
+    ? COLOR_RI_DARK
+    : COLOR_AI_DARK;
+  canvasCTX.textAlign = "center";
+  canvasCTX.textBaseline = "middle";
+
+  // actually drawing the text
+  let offset = size * 0.6;
+  let text = gameTied ? TEXT_TIE : playersTurn ? TEXT_RI : TEXT_AI;
+  if (gameTied) {
+    canvasCTX.strokeText(text, width / 2, height / 2);
+    canvasCTX.fillText(text, width / 2, height / 2);
+  } else {
+    canvasCTX.strokeText(text, width / 2, height / 2 - offset);
+    canvasCTX.fillText(text, width / 2, height / 2 - offset);
+    canvasCTX.strokeText(TEXT_WIN, width / 2, height / 2 + offset);
+    canvasCTX.fillText(TEXT_WIN, width / 2, height / 2 + offset);
   }
 }
 
