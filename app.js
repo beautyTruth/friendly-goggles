@@ -518,6 +518,7 @@
 
 // live life and believe in yourself
 // creativity is intelligence having fun
+// do the next right thing
 
 /*
 my code below
