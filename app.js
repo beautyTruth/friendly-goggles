@@ -536,12 +536,72 @@ const MARGIN = 0.02; // margin as a percentage of the shortest screen dimension
 // colors
 
 const COLOR_BG = "peachpuff";
-const COLOR_FRAME = "papayawhip";
-const COLOR_FRAME_BOTTOM = "cornflowerblue";
+const COLOR_FRAME = "cornflowerblue";
+const COLOR_FRAME_BOTTOM = "mintcream";
 const COLOR_AI = "olivedrab";
 const COLOR_AI_DARK = "olive";
 const COLOR_RI = "skyblue";
 const COLOR_RI_DARK = "powderblue";
+
+// the cell class
+class Cell {
+  constructor(left, top, w, h, row, col) {
+    this.left = left;
+    this.right = left + w;
+    this.top = top;
+    this.bottom = top + h;
+    this.w = w;
+    this.h = h;
+    this.row = row;
+    this.col = col;
+    this.centerX = left + w / 2;
+    this.centerY = top + h / 2;
+    this.r = (w * GRID_CIRCLE) / 2;
+    this.highlight = null;
+    this.owner = null;
+  }
+
+  // the drawCircle function
+  draw(canvasCTX) {
+    // owner color
+    let color =
+      this.owner == null ? COLOR_BG : this.owner ? COLOR_RI : COLOR_AI;
+
+    // drawing the circle
+    canvasCTX.fillStyle = color;
+    canvasCTX.beginPath();
+    canvasCTX.arc(this.centerX, this.centerY, this.r, 0, Math.PI * 2);
+    canvasCTX.fill();
+
+    // draw highlight circle
+    if (this.highlight != null) {
+      color = this.highlight ? COLOR_RI : COLOR_AI;
+
+      canvasCTX.lineWidth = this.r / 4;
+      canvasCTX.strokeStyle = color;
+      canvasCTX.beginPath();
+      canvasCTX.arc(this.centerX, this.centerY, this.r, 0, Math.PI * 2);
+      canvasCTX.stroke();
+    }
+  }
+}
+
+// game variables
+let gameOver,
+  gameTied,
+  grid = [],
+  playersTurn,
+  timeAI;
+
+// canvas dimensions
+
+let width, height, margin;
+setDimensions();
+
+// the window resize event listener
+
+// canvasEl.addEventListener("mousemove", highlightGrid);
+window.addEventListener("resize", setDimensions);
 
 // THE GAME LOOP -=-=-=--=--=--=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=
 let timeDiff, timeLast;
@@ -555,6 +615,10 @@ function playGame(timeNow) {
   // calculating the time difference
   timeDiff = timeNow - timeLast / 1000; // this will c alculate the time in seconds
   timeLast = timeNow;
+
+  // draw functions
+  drawBackground();
+  drawGrid();
 
   // calling the next frame
   requestAnimationFrame(playGame);
@@ -581,7 +645,18 @@ function createGrid() {
     // device landscape orientation
     cell = (height - margin * 2) / GRID_ROWS;
     marginY = margin;
-    marginX = width - (cell * GRID_COLS) / 2;
+    marginX = (width - cell * GRID_COLS) / 2;
+  }
+
+  // populating the grid
+  for (let w = 0; w < GRID_ROWS; w++) {
+    grid[w] = [];
+
+    for (let b = 0; b < GRID_COLS; b++) {
+      let left = marginX + b * cell;
+      let top = marginY + w * cell;
+      grid[w][b] = new Cell(left, top, cell, cell, w, b);
+    }
   }
 }
 
@@ -590,6 +665,33 @@ function createGrid() {
 function drawBackground() {
   canvasCTX.fillStyle = COLOR_BG;
   canvasCTX.fillRect(0, 0, width, height);
+}
+
+// draw grid function
+
+function drawGrid() {
+  let cell = grid[0][0];
+  let frameHeight = cell.h * GRID_ROWS;
+  let frameWidth = cell.w * GRID_COLS;
+  canvasCTX.fillStyle = COLOR_FRAME;
+  canvasCTX.fillRect(cell.left, cell.top, frameWidth, frameHeight);
+  canvasCTX.fillStyle = COLOR_FRAME_BOTTOM;
+  canvasCTX.fillRect(
+    cell.left - margin / 2,
+    cell.top + frameHeight - margin / 2,
+    frameWidth + margin,
+    margin
+  );
+
+  canvasCTX.fill();
+
+  // cells
+
+  for (let row of grid) {
+    for (let cell of row) {
+      cell.draw(canvasCTX);
+    }
+  }
 }
 
 // setDimensions function
