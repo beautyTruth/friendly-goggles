@@ -535,10 +535,10 @@ const MARGIN = 0.02; // margin as a percentage of the shortest screen dimension
 
 // colors
 
-const COLOR_BG = "peachpuff";
+const COLOR_BG = "mintcream";
 const COLOR_FRAME = "cornflowerblue";
-const COLOR_FRAME_BOTTOM = "mintcream";
-const COLOR_AI = "olivedrab";
+const COLOR_FRAME_BOTTOM = "peachpuff";
+const COLOR_AI = "fuchsia";
 const COLOR_AI_DARK = "olive";
 const COLOR_RI = "skyblue";
 const COLOR_RI_DARK = "powderblue";
@@ -559,6 +559,11 @@ class Cell {
     this.r = (w * GRID_CIRCLE) / 2;
     this.highlight = null;
     this.owner = null;
+  }
+
+  // contains function
+  contains(x, y) {
+    return x > this.left && x < this.right && y > this.top && y < this.bottom;
   }
 
   // the drawCircle function
@@ -599,8 +604,8 @@ let width, height, margin;
 setDimensions();
 
 // the window resize event listener
-
-// canvasEl.addEventListener("mousemove", highlightGrid);
+canvasEl.addEventListener("click", click);
+canvasEl.addEventListener("mousemove", highlightGrid);
 window.addEventListener("resize", setDimensions);
 
 // THE GAME LOOP -=-=-=--=--=--=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=
@@ -624,9 +629,71 @@ function playGame(timeNow) {
   requestAnimationFrame(playGame);
 }
 
+// checkWin function
+function checkWin(row, col) {
+  return false;
+}
+
+// the highlightCell function
+function highlightCell(x, y) {
+  let col = null;
+  for (let row of grid) {
+    for (let cell of row) {
+      cell.highlight = null;
+
+      if (cell.contains(x, y)) {
+        col = cell.col;
+      }
+    }
+  }
+
+  // if no col is chosen
+  if (col == null) {
+    return;
+  }
+
+  // highlighting the first unoccupied cell
+  for (let w = GRID_ROWS - 1; w >= 0; w--) {
+    if (grid[w][col].owner == null) {
+      grid[w][col].highlight = playersTurn;
+      return grid[w][col];
+    }
+  }
+  return null;
+}
+
+// the highlight grid function
+function highlightGrid(e) {
+  if (!playersTurn || gameOver) {
+    // return;
+  }
+
+  highlightCell(e.clientX, e.clientY);
+}
+
 // newGame function
 function newGame() {
+  // coin flip
+  playersTurn = Math.random() < 0.5;
+  gameOver = false;
+  gameOver = false;
   createGrid();
+}
+
+// the click function
+
+function click() {
+  if (gameOver) {
+    newGame();
+    return;
+  }
+
+  // if it is the AI player's turn, the RI player (you) should not be able to click
+  if (!playersTurn) {
+    // return;
+  }
+
+  selectCell();
 }
 
 // the createGrid function
@@ -691,6 +758,34 @@ function drawGrid() {
     for (let cell of row) {
       cell.draw(canvasCTX);
     }
+  }
+}
+
+// the selectCell function
+function selectCell() {
+  let highlighting = false;
+  OUTER: for (let row of grid) {
+    for (let cell of row) {
+      if (cell.highlight != null) {
+        highlighting = true;
+        cell.highlight = null;
+        cell.owner = playersTurn;
+        if (checkWin(cell.row, cell.col)) {
+          gameOver = true;
+        }
+        break OUTER;
+      }
+    }
+  }
+
+  // do not allow selection if there is no highlighting
+  if (!highlighting) {
+    return;
+  }
+
+  // switch the playa if the game is not yet over
+  if (!gameOver) {
+    playersTurn = !playersTurn;
   }
 }
 
