@@ -835,6 +835,22 @@ function selectCell() {
     return;
   }
 
+  // check for a tied game
+  if (!gameOver) {
+    gameTied = true;
+    OUTER: for (let row of grid) {
+      for (let cell of row) {
+        if (cell.owner == null) {
+          gameTied = false;
+          break OUTER;
+        }
+      }
+    }
+    if (gameTied) {
+      gameOver = true;
+    }
+  }
+
   // switch the playa if the game is not yet over
   if (!gameOver) {
     playersTurn = !playersTurn;
