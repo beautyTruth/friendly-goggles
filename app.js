@@ -570,6 +570,7 @@ class Cell {
     this.r = (w * GRID_CIRCLE) / 2;
     this.highlight = null;
     this.owner = null;
+    this.winner = false;
   }
 
   // contains function
@@ -590,8 +591,8 @@ class Cell {
     canvasCTX.fill();
 
     // draw highlight circle
-    if (this.highlight != null) {
-      color = this.highlight ? COLOR_RI : COLOR_AI;
+    if (this.winner || this.highlight != null) {
+      color = this.winner ? COLOR_WIN : this.highlight ? COLOR_RI : COLOR_AI;
 
       canvasCTX.lineWidth = this.r / 4;
       canvasCTX.strokeStyle = color;
@@ -644,6 +645,42 @@ function playGame(timeNow) {
 
 // checkWin function
 function checkWin(row, col) {
+  return false;
+}
+
+// the CONNECT FOUR FUNCTION -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function connect4(cells = []) {
+  let count = 0,
+    lastOwner = null;
+
+  let winningCells = [];
+
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i].owner == null) {
+      count = 0;
+      winningCells = [];
+    }
+    // for the same owner, we add to the count
+    else if (cells[i].owner == lastOwner) {
+      count++;
+      winningCells.push(cells[i]);
+    }
+    // if the owner is a new owner, we have a new count (starts the count over)
+    else {
+      count = 1;
+      winningCells = [];
+      winningCells.push(cells[i]);
+    }
+    // set the last owner
+    lastOwner = cells[i].owner;
+
+    if (count == 4) {
+      for (let cell of winningCells) {
+        cell.winner = true;
+      }
+      return true;
+    }
+  }
   return false;
 }
 
