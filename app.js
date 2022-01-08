@@ -646,6 +646,38 @@ function playGame(timeNow) {
 // checkWin function
 function checkWin(row, col) {
   return false;
+
+  let diagonalLeft = [],
+    diagonalRight = [],
+    horizontal = [],
+    vertical = [];
+  for (w = 0; w < GRID_ROWS; w++) {
+    for (b = 0; b < GRID_COLS; b++) {
+      // horizontal cells
+      if (w == row) {
+        horizontal.push(grid[w][b]);
+      }
+      // vertical cells
+      if (b == col) {
+        vertical.push(grid[w][b]);
+      }
+      // diagonal left
+      if (w - b == row - col) {
+        diagonalLeft.push([w][b]);
+      }
+      // diagonal right
+      if (w + b == row + col) {
+        diagonalRight.push([w][b]);
+      }
+    }
+  }
+  // if any have FOUR IN A row
+  return (
+    connect4(diagonalLeft) ||
+    connect4(diagonalRight) ||
+    connect4(vertical) ||
+    connect4(horizontal)
+  );
 }
 
 // the CONNECT FOUR FUNCTION -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
