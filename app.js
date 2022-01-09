@@ -645,7 +645,7 @@ function playGame(timeNow) {
 
 // checkWin function
 function checkWin(row, col) {
-  return false;
+  // return false;
 
   let diagonalLeft = [],
     diagonalRight = [],
@@ -681,6 +681,7 @@ function checkWin(row, col) {
 }
 
 // the CONNECT FOUR FUNCTION -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 function connect4(cells = []) {
   let count = 0,
     lastOwner = null;
