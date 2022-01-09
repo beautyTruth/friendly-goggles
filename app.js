@@ -535,8 +535,8 @@ const MARGIN = 0.02; // margin as a percentage of the shortest screen dimension
 const COLOR_BG = "mintcream";
 const COLOR_FRAME = "cornflowerblue";
 const COLOR_FRAME_BOTTOM = "peachpuff";
-const COLOR_AI = "fuchsia";
-const COLOR_AI_DARK = "olive";
+const COLOR_AI = "green";
+const COLOR_AI_DARK = "black";
 const COLOR_RI = "skyblue";
 const COLOR_RI_DARK = "navy";
 
@@ -785,7 +785,7 @@ function createGrid() {
 
   // device portrait orientation
   if (((width - margin * 2) * GRID_ROWS) / GRID_COLS < height - margin * 2) {
-    cell = (width * margin * 2) / GRID_COLS;
+    cell = (width - margin * 2) / GRID_COLS;
     marginX = margin;
     marginY = (height - cell * GRID_ROWS) / 2;
   } else {
