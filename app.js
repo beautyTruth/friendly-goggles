@@ -126,31 +126,26 @@
 //     diagonalRight = [],
 //     horizontal = [],
 //     vertical = [];
-
 //   for (let i = 0; i < GRID_ROWS; i++) {
 //     for (let j = 0; j < GRID_COLS; j++) {
 //       // horizontal cells
 //       if (i == row) {
 //         horizontal.push(grid[i][j]);
 //       }
-
 //       // vertical cells
 //       if (j == col) {
 //         vertical.push(grid[i][j]);
 //       }
-
 //       // diagonal left
 //       if (i - j == row - col) {
 //         diagonalLeft.push(grid[i][j]);
 //       }
-
 //       // diagonal right
 //       if (i + j == row + col) {
 //         diagonalRight.push(grid[i][j]);
 //       }
 //     }
 //   }
-
 //   // if any have four in a row, return a win
 //   return (
 //     connect4(diagonalLeft) ||
@@ -631,7 +626,7 @@ function playGame(timeNow) {
   }
 
   // calculating the time difference
-  timeDiff = timeNow - timeLast / 1000; // this will c alculate the time in seconds
+  timeDiff = timeNow - timeLast / 1000; // this will calculate the time in seconds
   timeLast = timeNow;
 
   // draw functions
@@ -645,14 +640,12 @@ function playGame(timeNow) {
 
 // checkWin function
 function checkWin(row, col) {
-  // return false;
-
   let diagonalLeft = [],
     diagonalRight = [],
     horizontal = [],
     vertical = [];
-  for (w = 0; w < GRID_ROWS; w++) {
-    for (b = 0; b < GRID_COLS; b++) {
+  for (let w = 0; w < GRID_ROWS; w++) {
+    for (let b = 0; b < GRID_COLS; b++) {
       // horizontal cells
       if (w == row) {
         horizontal.push(grid[w][b]);
@@ -663,11 +656,11 @@ function checkWin(row, col) {
       }
       // diagonal left
       if (w - b == row - col) {
-        diagonalLeft.push([w][b]);
+        diagonalLeft.push(grid[w][b]);
       }
       // diagonal right
       if (w + b == row + col) {
-        diagonalRight.push([w][b]);
+        diagonalRight.push(grid[w][b]);
       }
     }
   }
@@ -675,8 +668,8 @@ function checkWin(row, col) {
   return (
     connect4(diagonalLeft) ||
     connect4(diagonalRight) ||
-    connect4(vertical) ||
-    connect4(horizontal)
+    connect4(horizontal) ||
+    connect4(vertical)
   );
 }
 
@@ -687,24 +680,25 @@ function connect4(cells = []) {
     lastOwner = null;
 
   let winningCells = [];
-
   for (let i = 0; i < cells.length; i++) {
     if (cells[i].owner == null) {
       count = 0;
       winningCells = [];
     }
-    // for the same owner, we add to the count
+    // same owner, add to the count
     else if (cells[i].owner == lastOwner) {
       count++;
       winningCells.push(cells[i]);
     }
-    // if the owner is a new owner, we have a new count (starts the count over)
+
+    // new owner, new count
     else {
       count = 1;
       winningCells = [];
       winningCells.push(cells[i]);
     }
-    // set the last owner
+
+    // set the lastOwner
     lastOwner = cells[i].owner;
 
     if (count == 4) {
@@ -715,6 +709,22 @@ function connect4(cells = []) {
     }
   }
   return false;
+}
+
+// the click function
+
+function click() {
+  if (gameOver) {
+    newGame();
+    return;
+  }
+
+  // if it is the AI player's turn, the RI player (you) should not be able to click
+  if (!playersTurn) {
+    // return;
+  }
+
+  selectCell();
 }
 
 // the highlightCell function
@@ -761,22 +771,6 @@ function newGame() {
   gameOver = false;
   gameOver = false;
   createGrid();
-}
-
-// the click function
-
-function click() {
-  if (gameOver) {
-    newGame();
-    return;
-  }
-
-  // if it is the AI player's turn, the RI player (you) should not be able to click
-  if (!playersTurn) {
-    // return;
-  }
-
-  selectCell();
 }
 
 // the createGrid function
