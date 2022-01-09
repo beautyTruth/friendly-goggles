@@ -545,9 +545,9 @@ const COLOR_TIE_DARK = "black";
 const COLOR_WIN = "lime";
 
 //text
-const TEXT_AI = "Old age";
+const TEXT_AI = "Steven Segal";
 const TEXT_RI = "You";
-const TEXT_TIE = "Draw";
+const TEXT_TIE = "Betty is saved!";
 const TEXT_WIN = "killed Betty!";
 
 // the cell class
