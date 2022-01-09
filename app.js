@@ -904,6 +904,69 @@ function AI(diff) {
   options[2] = []; // making a strategic move, but one that does not result in a block, a win, or loss to RI
   options[3] = []; // a move that results in an RI win
 
+  // loop through each column and check for a win
+  let cell;
+  for (let w = 0; w < GRID_COLS; w++) {
+    cell = highlightCell(grid[0][w].centerX, grid[0][w].centerY);
+
+    // if the column is full, go to the next column
+    if (cell == null) {
+      continue;
+    }
+
+    // if the AI wins - FIRST option
+    cell.owner = playersTurn; // in this case, the AI's turn
+    if (checkWin(cell.row, cell.col)) {
+      options[0].push(w);
+    } else {
+      // SECOND option, AI blocks the RI
+      cell.owner = !playersTurn; // in this case, the RI's turn
+      if (checkWin(cell.row, cell.col)) {
+        options[1].push(w);
+      } else {
+        cell.owner = playersTurn;
+
+        //check the cell above
+        if (cell.row > 0) {
+          grid[cell.row - 1][cell.col].owner = !playersTurn;
+
+          // the FOURTH option, do not let the player win
+          if (checkWin(cell.row - 1, cell.col)) {
+            options[3].push(w);
+          }
+
+          // the THIRD option, the normal move
+          else {
+            options[2].push(w);
+          }
+
+          // deselect the cell above
+          grid[cell.row - 1][cell.col].owner = null;
+        }
+
+        // if there is no available row above, THIRD option
+        else {
+          options[2].push(i);
+        }
+      }
+    }
+    // cancel the highlight and selection
+    cell.highlight = null;
+    cell.owner = null;
+  }
+
+  // select a random column in an order of priority
+  let col;
+  if (options[0].length > 0) {
+    col = options[0][Math.floor(Math.random() * options[0].length)];
+  } else if (options[1].length > 0) {
+    col = options[1][Math.floor(Math.random() * options[1].length)];
+  } else if (options[2].length > 0) {
+    col = options[2][Math.floor(Math.random() * options[2].length)];
+  } else if (options[3].length > 0) {
+    col = options[3][Math.floor(Math.random() * options[3].length)];
+  }
+
   // highlighting the selected cell
   highlightCell(grid[0][col].centerX, grid[0][col].centerY);
 }
