@@ -545,10 +545,10 @@ const COLOR_TIE_DARK = "black";
 const COLOR_WIN = "lime";
 
 //text
-const TEXT_AI = "Joe Mamma";
+const TEXT_AI = "Old age";
 const TEXT_RI = "You";
 const TEXT_TIE = "Draw";
-const TEXT_WIN = "WON!";
+const TEXT_WIN = "killed Betty!";
 
 // the cell class
 class Cell {
@@ -946,13 +946,20 @@ function AI(diff) {
 
         // if there is no available row above, THIRD option
         else {
-          options[2].push(i);
+          options[2].push(w);
         }
       }
     }
     // cancel the highlight and selection
     cell.highlight = null;
     cell.owner = null;
+  }
+
+  // clear the winning cells
+  for (let row of grid) {
+    for (let cell of row) {
+      cell.winner = false;
+    }
   }
 
   // select a random column in an order of priority
@@ -969,6 +976,8 @@ function AI(diff) {
 
   // highlighting the selected cell
   highlightCell(grid[0][col].centerX, grid[0][col].centerY);
+
+  timeAI = DELAY_AI;
 }
 
 // the selectCell function
