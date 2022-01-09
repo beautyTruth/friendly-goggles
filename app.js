@@ -524,6 +524,7 @@ const canvasCTX = canvasEl.getContext("2d");
 
 // the game's paramaters (as a percentage of screen size to make it responsive)
 
+const DELAY_AI = 0.5; // time in seconds between the RI's completed turn and the AI's selection
 const GRID_CIRCLE = 0.7; // circle size as a percentage of the cell size
 const GRID_COLS = 7; // number of game columns
 const GRID_ROWS = 6; // number of game rows
@@ -628,6 +629,8 @@ function playGame(timeNow) {
   // calculating the time difference
   timeDiff = timeNow - timeLast / 1000; // this will calculate the time in seconds
   timeLast = timeNow;
+
+  AI(timeDiff);
 
   // draw functions
   drawBackground();
@@ -758,7 +761,7 @@ function highlightCell(x, y) {
 // the highlight grid function
 function highlightGrid(e) {
   if (!playersTurn || gameOver) {
-    // return;
+    return;
   }
 
   highlightCell(e.clientX, e.clientY);
@@ -875,6 +878,34 @@ function drawText() {
     canvasCTX.strokeText(TEXT_WIN, width / 2, height / 2 + offset);
     canvasCTX.fillText(TEXT_WIN, width / 2, height / 2 + offset);
   }
+}
+
+// -=-=-=--=-=-==-=-=- AI -=-=-=-=-=-=-=-=-=-= //
+
+function AI(diff) {
+  if (playersTurn || gameOver) {
+    return;
+  }
+
+  // delay the AI's selection so it appears to have thought about it and the game appears more natural
+  if (timeAI > 0) {
+    timeAI -= diff;
+    if (timeAI <= 0) {
+      selectCell();
+    }
+    return;
+  }
+
+  // |---------- the AI algorithm ----------|
+  // the array of options
+  let options = [];
+  options[0] = []; // where the AI makes a winning selection
+  options[1] = []; // in which the RI decides to block the RI
+  options[2] = []; // making a strategic move, but one that does not result in a block, a win, or loss to RI
+  options[3] = []; // a move that results in an RI win
+
+  // highlighting the selected cell
+  highlightCell(grid[0][col].centerX, grid[0][col].centerY);
 }
 
 // the selectCell function
